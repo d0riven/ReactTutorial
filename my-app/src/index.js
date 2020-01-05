@@ -123,12 +123,7 @@ class Game extends React.Component {
     });
     const orderMoves = this.state.orderIsAsc ? moves : moves.reverse();
 
-    let status;
-    if (winner) {
-      status = 'Winner: ' + winner.mark;
-    } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
+    const status = this._status(winner);
 
     return (
       <div className="game">
@@ -152,6 +147,18 @@ class Game extends React.Component {
         </div>
       </div>
     );
+  }
+
+  _status(winner) {
+    if (winner) {
+      return 'Winner: ' + winner.mark;
+    }
+    // TODO: use const
+    if (this.state.stepNumber === 9) {
+      return 'Draw';
+    }
+
+    return 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
   }
 }
 
