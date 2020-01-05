@@ -47,7 +47,14 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       xIsNext: true,
+      orderIsAsc: true,
     };
+  }
+
+  flipOrder() {
+    this.setState({
+      orderIsAsc: !this.state.orderIsAsc,
+    })
   }
 
   handleClick(i) {
@@ -107,6 +114,7 @@ class Game extends React.Component {
         </li>
       );
     });
+    const orderMoves = this.state.orderIsAsc ? moves : moves.reverse();
 
     let status;
     if (winner) {
@@ -125,7 +133,14 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <div>
+            <p>
+              <button onClick={() => this.flipOrder()}>
+                history order: {this.state.orderIsAsc ? 'desc' : 'asc'}
+              </button>
+            </p>
+            <ol>{orderMoves}</ol>
+          </div>
         </div>
       </div>
     );
