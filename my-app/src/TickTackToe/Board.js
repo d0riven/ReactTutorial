@@ -31,3 +31,4 @@ export class Board extends React.Component {
     return <div>{lines}</div>;
   }
 }
+

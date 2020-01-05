@@ -1,14 +1,12 @@
 import React from "react";
 import {Board} from "./Board";
+import {History} from "./History";
 
 export class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      history: [{
-        squares: Array(9).fill(null),
-        position: Array(9).fill(null)
-      }],
+      history: new History(),
       stepNumber: 0,
       xIsNext: true,
       orderIsAsc: true,
@@ -22,8 +20,8 @@ export class Game extends React.Component {
   }
 
   handleClick(i) {
-    const history = this.state.history.slice(0, this.state.stepNumber + 1);
-    const current = history[history.length - 1];
+    const history = this.state.history.getUntilStep(this.state.stepNumber);
+    const current = history.currentMove();
     const squares = current.squares.slice();
     const position = {
       col: Math.floor(i / 3) + 1,
@@ -37,11 +35,11 @@ export class Game extends React.Component {
 
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
-      history: history.concat([{
+      history: history.addMove({
         squares: squares,
         position: position,
-      }]),
-      stepNumber: history.length,
+      }),
+      stepNumber: history.count(),
       xIsNext: !this.state.xIsNext,
     });
   }
@@ -56,10 +54,11 @@ export class Game extends React.Component {
 
   render() {
     const history = this.state.history;
-    const current = history[this.state.stepNumber];
+    const current = history.currentMove(this.state.stepNumber);
     const winner = calculateWinner(current.squares);
 
-    const moves = history.map((move, step) => {
+    // TODO: historyの中身を隠蔽しつつ、他のクラスにこの処理を委譲したい
+    const moves = history.toArray().map((move, step) => {
       const isCurrent = this.state.stepNumber === step;
       const description = step ?
         `Go to step #${step} (col: ${move.position.col}, row: ${move.position.row})` :
