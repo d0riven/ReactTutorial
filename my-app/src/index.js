@@ -52,6 +52,7 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
+        position: Array(9).fill(null)
       }],
       stepNumber: 0,
       xIsNext: true,
@@ -62,6 +63,11 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+    const position = {
+      col:  Math.floor(i / 3) + 1,
+      row: (i % 3) + 1,
+    };
+
     // 既に勝利している場合 or マス目が埋まっている場合は何もしない
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -71,6 +77,7 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{
         squares: squares,
+        position: position,
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -90,13 +97,14 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
 
-    const moves = history.map((step, move) => {
-      const description = move ?
-        'Go to move #' + move :
+    const moves = history.map((move, step) => {
+      const description = step ?
+        `Go to step #${step} (col: ${move.position.col}, row: ${move.position.row})` :
         'Go to game start';
+
       return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{description}</button>
+        <li key={step}>
+          <button onClick={() => this.jumpTo(step)}>{description}</button>
         </li>
       );
     });
