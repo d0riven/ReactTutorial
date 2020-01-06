@@ -1,6 +1,6 @@
 import React from "react";
 import {Board} from "./Board";
-import {HistoryList} from "./History";
+import {HistoryList, History} from "./History";
 
 export class Game extends React.Component {
   constructor(props) {
@@ -21,8 +21,8 @@ export class Game extends React.Component {
 
   handleClick(i) {
     const historyList = this.state.historyList.getUntilStep(this.state.stepNumber);
-    const current = historyList.currentMove();
-    const squares = current.squares.slice();
+    const current = historyList.currentHistory();
+    const squares = current.getBoardState();
     const position = {
       col: Math.floor(i / 3) + 1,
       row: (i % 3) + 1,
@@ -35,10 +35,10 @@ export class Game extends React.Component {
 
     squares[i] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
-      historyList: historyList.addHistory({
-        squares: squares,
-        position: position,
-      }),
+      historyList: historyList.addHistory(new History(
+        squares,
+        position,
+      )),
       stepNumber: historyList.count(),
       xIsNext: !this.state.xIsNext,
     });
@@ -54,14 +54,14 @@ export class Game extends React.Component {
 
   render() {
     const historyList = this.state.historyList;
-    const current = historyList.currentMove(this.state.stepNumber);
-    const winner = calculateWinner(current.squares);
+    const current = historyList.currentHistory(this.state.stepNumber);
+    const winner = calculateWinner(current.getBoardState());
 
     // TODO: historyListの中身を隠蔽しつつ、他のクラスにこの処理を委譲したい
-    const moves = historyList.toArray().map((move, step) => {
+    const moves = historyList.toArray().map((history, step) => {
       const isCurrent = this.state.stepNumber === step;
       const description = step ?
-        `Go to step #${step} (col: ${move.position.col}, row: ${move.position.row})` :
+        `Go to step #${step} (col: ${history.getMove().col}, row: ${history.getMove().row})` :
         'Go to game start';
 
       if (isCurrent) {
@@ -77,6 +77,7 @@ export class Game extends React.Component {
         </li>
       );
     });
+    // TODO: orderMoves -> sortedMoves
     const orderMoves = this.state.orderIsAsc ? moves : moves.reverse();
 
     const status = this._status(winner);
@@ -85,7 +86,7 @@ export class Game extends React.Component {
       <div className="game">
         <div className="game-board">
           <Board
-            squares={current.squares}
+            squares={current.getBoardState()}
             onClick={(i) => this.handleClick(i)}
             winnerPositions={winner ? winner.positions : null}
           />
