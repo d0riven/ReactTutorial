@@ -1,37 +1,37 @@
-// 着手の履歴
-export class History {
-  constructor(history = null) {
-    if (history == null) {
-      this._history = [{
+// 着手の全履歴
+export class Histories {
+  constructor(histories = null) {
+    if (histories == null) {
+      this._histories = [{
         squares: Array(9).fill(null),
         position: Array(9).fill(null),
       }];
     } else {
-      this._history = history;
+      this._histories = histories;
     }
   }
 
-  addMove(move) {
-    return new History(this._history.concat([move]));
+  addHistory(history) {
+    return new Histories(this._histories.concat([history]));
   }
 
   getUntilStep(stepNumber) {
-    return new History(this._history.slice(0, stepNumber + 1));
+    return new Histories(this._histories.slice(0, stepNumber + 1));
   }
 
   // TODO: extract Move
   currentMove(stepNumber = null) {
     if (stepNumber) {
-      return this._history[stepNumber];
+      return this._histories[stepNumber];
     }
-    return this._history[this._history.length - 1];
+    return this._histories[this._histories.length - 1];
   }
 
   toArray() {
-    return this._history.slice();
+    return this._histories.slice();
   }
 
   count() {
-    return this._history.length;
+    return this._histories.length;
   }
 }
