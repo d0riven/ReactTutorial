@@ -1,6 +1,7 @@
 import React from "react";
 import {Board} from "./Board";
 import {HistoryList, History} from "./History";
+import {Move} from "./Move";
 
 export class Game extends React.Component {
   constructor(props) {
@@ -23,10 +24,7 @@ export class Game extends React.Component {
     const historyList = this.state.historyList.getUntilStep(this.state.stepNumber);
     const current = historyList.currentHistory();
     const squares = current.getBoardState();
-    const position = {
-      col: Math.floor(i / 3) + 1,
-      row: (i % 3) + 1,
-    };
+    const move = new Move(i);
 
     // 既に勝利している場合 or マス目が埋まっている場合は何もしない
     if (calculateWinner(squares) || squares[i]) {
@@ -37,7 +35,7 @@ export class Game extends React.Component {
     this.setState({
       historyList: historyList.addHistory(new History(
         squares,
-        position,
+        move,
       )),
       stepNumber: historyList.count(),
       xIsNext: !this.state.xIsNext,

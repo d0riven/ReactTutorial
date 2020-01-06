@@ -1,10 +1,9 @@
 // 着手の履歴
 export class History {
   // TODO: square -> boardState
-  // TODO: position -> move
-  constructor(squares, position) {
+  constructor(squares, move) {
     this._squares = squares;
-    this._position = position;
+    this._move = move;
   }
 
   getBoardState() {
@@ -12,7 +11,7 @@ export class History {
   }
 
   getMove() {
-    return Object.assign({}, this._position);
+    return this._move.copy();
   }
 }
 
