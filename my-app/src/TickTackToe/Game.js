@@ -21,10 +21,10 @@ export class Game extends React.Component {
   }
 
   handleClick(i) {
-    const historyList = this.state.historyList.getUntilStep(this.state.stepNumber);
+    const move = Move.generate(i, this.state.stepNumber);
+    const historyList = this.state.historyList.getUntilStep(move.stepNumber);
     const current = historyList.currentHistory();
     const squares = current.getBoardState();
-    const move = new Move(i);
 
     // 既に勝利している場合 or マス目が埋まっている場合は何もしない
     if (calculateWinner(squares) || squares[i]) {
