@@ -1,26 +1,26 @@
-
 // 着手の履歴
+import {BoardState} from "./BoardState";
+
 export class History {
-  // TODO: square -> boardState
-  constructor(squares, move, stepNumber) {
-    this._squares = squares;
+  constructor(boardState, move, stepNumber) {
+    this._boardState = boardState;
     this._move = move;
     this.stepNumber = stepNumber;
   }
 
   getBoardState() {
-    return this._squares.slice();
+    return this._boardState.clone();
   }
 
   getMove() {
-    return this._move.copy();
+    return this._move.clone();
   }
 
   isNextFirstTurn() {
     return this.stepNumber % 2 === 1;
   }
 
-  getNextTurn() {
+  getNextTurnSymbol() {
     return this.isNextFirstTurn() ? 'X' : 'O';
   }
 
@@ -33,16 +33,15 @@ export class History {
   }
 
   clone() {
-    return new History(this._squares, this._move, this.stepNumber);
+    return new History(this._boardState, this._move, this.stepNumber);
   }
 }
 
 const firstHistory = new History(
-  Array(9).fill(null),
+  new BoardState(Array(9).fill(null)),
   null,
   1,
 );
-
 
 // 着手の履歴一覧
 export class HistoryList {

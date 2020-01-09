@@ -21,21 +21,20 @@ export class Game extends React.Component {
   handleClick(i) {
     const historyList = this.state.historyList;
     const current = historyList.currentHistory();
-    const squares = current.getBoardState();
-    const move = Move.generateSquareByIndex(i);
+    const boardState = current.getBoardState();
+    const move = Move.generateBySquareIndex(i);
 
     // 既に勝利している場合 or マス目が埋まっている場合は何もしない
-    if (calculateWinner(squares) || squares[i]) {
+    if (boardState.getWinner() || boardState.isMarked(move)) {
       return;
     }
 
-    squares[i] = current.getNextTurn();
+    boardState.mark(move, current.getNextTurnSymbol());
     this.setState({
       historyList: historyList.addHistory(new History(
-        squares,
+        boardState,
         move,
         current.stepNumber + 1,
-        current.getNextTurn(),
       )),
     });
   }
@@ -50,7 +49,7 @@ export class Game extends React.Component {
   render() {
     const historyList = this.state.historyList;
     const current = historyList.currentHistory();
-    const winner = calculateWinner(current.getBoardState());
+    const boardState = current.getBoardState();
 
     // TODO: historyListの中身を隠蔽しつつ、他のクラスにこの処理を委譲したい
     const moves = historyList.toArray().map((history, step) => {
@@ -74,13 +73,14 @@ export class Game extends React.Component {
     // TODO: orderMoves -> sortedMoves
     const orderMoves = this.state.orderIsAsc ? moves : moves.reverse();
 
+    const winner = boardState.getWinner();
     const status = this._status(winner, current);
 
     return (
       <div className="game">
         <div className="game-board">
           <Board
-            squares={current.getBoardState()}
+            boardState={boardState}
             onClick={(i) => this.handleClick(i)}
             winnerPositions={winner ? winner.positions : null}
           />
@@ -102,39 +102,13 @@ export class Game extends React.Component {
 
   _status(winner, history) {
     if (winner) {
-      return 'Winner: ' + winner.mark;
+      return 'Winner: ' + winner.symbol;
     }
     // TODO: use const
     if (this.state.stepNumber === 9) {
       return 'Draw';
     }
 
-    return 'Next player: ' + history.getNextTurn();
+    return 'Next player: ' + history.getNextTurnSymbol();
   }
-}
-
-function calculateWinner(squares) {
-  const lines = [
-    // horizontal
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    // vertical
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    // cross
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return {
-        mark: squares[a],
-        positions: [a, b, c],
-      }
-    }
-  }
-  return null;
 }

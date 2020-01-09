@@ -7,11 +7,11 @@ export class Move {
     this.col = col;
   }
 
-  copy() {
+  clone() {
     return new Move(this.row, this.col);
   }
 
-  static generateSquareByIndex(i) {
+  static generateBySquareIndex(i) {
     return new Move(Math.floor(i / 3) + 1, (i % 3) + 1);
   }
 }

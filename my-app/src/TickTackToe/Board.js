@@ -1,5 +1,6 @@
 import React from "react";
 import {Square} from "./Square";
+import {Move} from "./Move";
 
 export class Board extends React.Component {
   renderSquare(i) {
@@ -12,7 +13,7 @@ export class Board extends React.Component {
     return (
       <Square
         key={i}
-        value={this.props.squares[i]}
+        value={this.props.boardState.getSymbol(Move.generateBySquareIndex(i))}
         onClick={() => this.props.onClick(i)}
         isHighlight={isHighlight}
       />
