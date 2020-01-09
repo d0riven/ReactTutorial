@@ -1,3 +1,4 @@
+// 盤面の状態
 export class BoardState  {
   constructor(squares) {
     this._squares = squares;

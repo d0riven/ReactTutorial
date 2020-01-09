@@ -1,5 +1,6 @@
 import React from "react";
 
+// マス目
 export function Square(props) {
   return (
     <button

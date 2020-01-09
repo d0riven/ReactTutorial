@@ -70,11 +70,10 @@ export class Game extends React.Component {
         </li>
       );
     });
-    // TODO: orderMoves -> sortedMoves
-    const orderMoves = this.state.orderIsAsc ? moves : moves.reverse();
 
     const winner = boardState.getWinner();
     const status = this._status(winner, current);
+    const sortedMoves = this.state.orderIsAsc ? moves : moves.reverse();
 
     return (
       <div className="game">
@@ -93,7 +92,7 @@ export class Game extends React.Component {
                 history list order: {this.state.orderIsAsc ? 'desc' : 'asc'}
               </button>
             </p>
-            <ol>{orderMoves}</ol>
+            <ol>{sortedMoves}</ol>
           </div>
         </div>
       </div>
@@ -104,7 +103,6 @@ export class Game extends React.Component {
     if (winner) {
       return 'Winner: ' + winner.symbol;
     }
-    // TODO: use const
     if (this.state.stepNumber === 9) {
       return 'Draw';
     }
