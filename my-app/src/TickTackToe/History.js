@@ -1,9 +1,11 @@
+
 // 着手の履歴
 export class History {
   // TODO: square -> boardState
-  constructor(squares, move) {
+  constructor(squares, move, stepNumber) {
     this._squares = squares;
     this._move = move;
+    this.stepNumber = stepNumber;
   }
 
   getBoardState() {
@@ -13,16 +15,40 @@ export class History {
   getMove() {
     return this._move.copy();
   }
+
+  isNextFirstTurn() {
+    return this.stepNumber % 2 === 1;
+  }
+
+  getNextTurn() {
+    return this.isNextFirstTurn() ? 'X' : 'O';
+  }
+
+  isCurrentStep(currentStep) {
+    return this.stepNumber === currentStep;
+  }
+
+  isFirstHistory() {
+    return this.stepNumber === 1;
+  }
+
+  clone() {
+    return new History(this._squares, this._move, this.stepNumber);
+  }
 }
+
+const firstHistory = new History(
+  Array(9).fill(null),
+  null,
+  1,
+);
+
 
 // 着手の履歴一覧
 export class HistoryList {
   constructor(histories = null) {
     if (histories == null) {
-      this._histories = [new History(
-        Array(9).fill(null),
-        Array(9).fill(null),
-      )];
+      this._histories = [firstHistory.clone()];
     } else {
       this._histories = histories;
     }
@@ -32,15 +58,12 @@ export class HistoryList {
     return new HistoryList(this._histories.concat([history]));
   }
 
-  getUntilStep(stepNumber) {
-    return new HistoryList(this._histories.slice(0, stepNumber + 1));
+  getUntilBySelectedHistory(history) {
+    return new HistoryList(this._histories.slice(0, history.stepNumber));
   }
 
-  currentHistory(stepNumber = null) {
-    if (stepNumber) {
-      return this._histories[stepNumber];
-    }
-    return this._histories[this._histories.length - 1];
+  currentHistory() {
+    return this._histories[this.count() - 1].clone();
   }
 
   toArray() {

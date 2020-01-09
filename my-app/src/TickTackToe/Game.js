@@ -8,8 +8,6 @@ export class Game extends React.Component {
     super(props);
     this.state = {
       historyList: new HistoryList(),
-      stepNumber: 0,
-      xIsNext: true,
       orderIsAsc: true,
     };
   }
@@ -21,64 +19,62 @@ export class Game extends React.Component {
   }
 
   handleClick(i) {
-    const move = Move.generate(i, this.state.stepNumber);
-    const historyList = this.state.historyList.getUntilStep(move.stepNumber);
+    const historyList = this.state.historyList;
     const current = historyList.currentHistory();
     const squares = current.getBoardState();
+    const move = Move.generateSquareByIndex(i);
 
     // 既に勝利している場合 or マス目が埋まっている場合は何もしない
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
 
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    squares[i] = current.getNextTurn();
     this.setState({
       historyList: historyList.addHistory(new History(
         squares,
         move,
+        current.stepNumber + 1,
+        current.getNextTurn(),
       )),
-      stepNumber: historyList.count(),
-      xIsNext: !this.state.xIsNext,
     });
   }
 
-  jumpTo(step) {
+  jumpTo(selectedHistory) {
     this.setState({
-      stepNumber: step,
-      xIsNext: (step % 2) === 0,
+      historyList: this.state.historyList.getUntilBySelectedHistory(selectedHistory)
     });
   }
 
 
   render() {
     const historyList = this.state.historyList;
-    const current = historyList.currentHistory(this.state.stepNumber);
+    const current = historyList.currentHistory();
     const winner = calculateWinner(current.getBoardState());
 
     // TODO: historyListの中身を隠蔽しつつ、他のクラスにこの処理を委譲したい
     const moves = historyList.toArray().map((history, step) => {
-      const isCurrent = this.state.stepNumber === step;
-      const description = step ?
-        `Go to step #${step} (col: ${history.getMove().col}, row: ${history.getMove().row})` :
-        'Go to game start';
+      const description = history.isFirstHistory() ?
+        'Go to game start' :
+      `Go to step #${step} (col: ${history.getMove().col}, row: ${history.getMove().row})`;
 
-      if (isCurrent) {
+      if (history.isCurrentStep(this.state.stepNumber)) {
         return (
           <li key={step}>
-            <button onClick={() => this.jumpTo(step)}><b>{description}</b></button>
+            <button onClick={() => this.jumpTo(history)}><b>{description}</b></button>
           </li>
         );
       }
       return (
         <li key={step}>
-          <button onClick={() => this.jumpTo(step)}>{description}</button>
+          <button onClick={() => this.jumpTo(history)}>{description}</button>
         </li>
       );
     });
     // TODO: orderMoves -> sortedMoves
     const orderMoves = this.state.orderIsAsc ? moves : moves.reverse();
 
-    const status = this._status(winner);
+    const status = this._status(winner, current);
 
     return (
       <div className="game">
@@ -104,7 +100,7 @@ export class Game extends React.Component {
     );
   }
 
-  _status(winner) {
+  _status(winner, history) {
     if (winner) {
       return 'Winner: ' + winner.mark;
     }
@@ -113,7 +109,7 @@ export class Game extends React.Component {
       return 'Draw';
     }
 
-    return 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    return 'Next player: ' + history.getNextTurn();
   }
 }
 
