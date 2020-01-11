@@ -57,7 +57,7 @@ export class Game extends React.Component {
         'Go to game start' :
       `Go to step #${step} (col: ${history.getMove().col}, row: ${history.getMove().row})`;
 
-      if (history.isCurrentStep(this.state.stepNumber)) {
+      if (historyList.isCurrentHistory(history)) {
         return (
           <li key={step}>
             <button onClick={() => this.jumpTo(history)}><b>{description}</b></button>
@@ -103,7 +103,7 @@ export class Game extends React.Component {
     if (winner) {
       return 'Winner: ' + winner.symbol;
     }
-    if (this.state.stepNumber === 9) {
+    if (history.stepNumber === 10) {
       return 'Draw';
     }
 

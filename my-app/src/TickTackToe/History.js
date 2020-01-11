@@ -24,10 +24,6 @@ export class History {
     return this.isNextFirstTurn() ? 'X' : 'O';
   }
 
-  isCurrentStep(currentStep) {
-    return this.stepNumber === currentStep;
-  }
-
   isFirstHistory() {
     return this.stepNumber === 1;
   }
@@ -54,6 +50,12 @@ export class HistoryList {
     this._selectedStep = null;
   }
 
+  selectHistory(history) {
+    let h = new HistoryList(this._histories);
+    h._selectedStep = history.stepNumber;
+    return h;
+  }
+
   addHistory(history) {
     if (this._selectedStep === null) {
       return new HistoryList(this._histories.concat([history]));
@@ -61,11 +63,8 @@ export class HistoryList {
     return new HistoryList(this._histories.slice(0, this._selectedStep).concat([history]));
   }
 
-
-  selectHistory(history) {
-    let h = new HistoryList(this._histories);
-    h._selectedStep = history.stepNumber;
-    return h;
+  isCurrentHistory(history) {
+    return this.currentHistory().stepNumber === history.stepNumber;
   }
 
   currentHistory() {
