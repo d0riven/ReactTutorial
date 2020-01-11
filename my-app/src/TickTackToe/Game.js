@@ -41,7 +41,7 @@ export class Game extends React.Component {
 
   jumpTo(selectedHistory) {
     this.setState({
-      historyList: this.state.historyList.getUntilBySelectedHistory(selectedHistory)
+      historyList: this.state.historyList.selectHistory(selectedHistory)
     });
   }
 

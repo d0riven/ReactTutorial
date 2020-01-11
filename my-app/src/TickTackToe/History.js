@@ -51,18 +51,28 @@ export class HistoryList {
     } else {
       this._histories = histories;
     }
+    this._selectedStep = null;
   }
 
   addHistory(history) {
-    return new HistoryList(this._histories.concat([history]));
+    if (this._selectedStep === null) {
+      return new HistoryList(this._histories.concat([history]));
+    }
+    return new HistoryList(this._histories.slice(0, this._selectedStep).concat([history]));
   }
 
-  getUntilBySelectedHistory(history) {
-    return new HistoryList(this._histories.slice(0, history.stepNumber));
+
+  selectHistory(history) {
+    let h = new HistoryList(this._histories);
+    h._selectedStep = history.stepNumber;
+    return h;
   }
 
   currentHistory() {
-    return this._histories[this.count() - 1].clone();
+    if (this._selectedStep === null) {
+      return this._histories[this.count() - 1].clone();
+    }
+    return this._histories[this._selectedStep - 1].clone();
   }
 
   toArray() {
