@@ -1,6 +1,6 @@
-// 着手の履歴
 import {BoardState} from "./BoardState";
 
+// 着手の履歴
 export class History {
   constructor(boardState, move, stepNumber) {
     this._boardState = boardState;

@@ -5,7 +5,12 @@ export class BoardState  {
   }
 
   mark(move, symbol) {
-    return this._squares[this._toIndex(move.row, move.col)] = symbol;
+    if (this.isMarked(move)) {
+      return false;
+    }
+
+    this._squares[this._toIndex(move.row, move.col)] = symbol;
+    return true;
   }
 
   isMarked(move) {
@@ -16,7 +21,7 @@ export class BoardState  {
     return this._squares[this._toIndex(move.row, move.col)];
   }
 
-  getWinner() {
+  judgement() {
     const lines = [
       // horizontal
       [0, 1, 2],
@@ -30,16 +35,33 @@ export class BoardState  {
       [0, 4, 8],
       [2, 4, 6],
     ];
+
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
       if (this._squares[a] && this._squares[a] === this._squares[b] && this._squares[a] === this._squares[c]) {
         return {
-          symbol: this._squares[a],
-          positions: [a, b, c],
+          isDraw: false,
+          winner: {
+            symbol: this._squares[a],
+            positions: [a, b, c],
+          },
         }
       }
     }
-    return null;
+
+    let isFinished = this._squares.reduce((acm, square) => {
+      return acm && square !== null;
+    }, true);
+
+    if (isFinished) {
+      return {
+        isDraw: true,
+      }
+    }
+
+    return {
+      isDraw: false,
+    }
   }
 
   clone() {

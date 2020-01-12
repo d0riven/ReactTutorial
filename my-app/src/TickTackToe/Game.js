@@ -25,11 +25,10 @@ export class Game extends React.Component {
     const move = Move.generateBySquareIndex(i);
 
     // 既に勝利している場合 or マス目が埋まっている場合は何もしない
-    if (boardState.getWinner() || boardState.isMarked(move)) {
+    if (boardState.judgement().winner || !boardState.mark(move, current.getNextTurnSymbol())) {
       return;
     }
 
-    boardState.mark(move, current.getNextTurnSymbol());
     this.setState({
       historyList: historyList.addHistory(new History(
         boardState,
@@ -71,8 +70,7 @@ export class Game extends React.Component {
       );
     });
 
-    const winner = boardState.getWinner();
-    const status = this._status(winner, current);
+    const status = this._status(boardState, current);
     const sortedMoves = this.state.orderIsAsc ? moves : moves.reverse();
 
     return (
@@ -81,7 +79,6 @@ export class Game extends React.Component {
           <Board
             boardState={boardState}
             onClick={(i) => this.handleClick(i)}
-            winnerPositions={winner ? winner.positions : null}
           />
         </div>
         <div className="game-info">
@@ -99,11 +96,12 @@ export class Game extends React.Component {
     );
   }
 
-  _status(winner, history) {
-    if (winner) {
-      return 'Winner: ' + winner.symbol;
+  _status(boardState, history) {
+    const result = boardState.judgement()
+    if (result.winner) {
+      return 'Winner: ' + result.winner.symbol;
     }
-    if (history.stepNumber === 10) {
+    if (result.isDraw) {
       return 'Draw';
     }
 

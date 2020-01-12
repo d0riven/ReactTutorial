@@ -5,8 +5,9 @@ import {Move} from "./Move";
 export class Board extends React.Component {
   renderSquare(i) {
     let isHighlight = false;
-    if (this.props.winnerPositions) {
-      isHighlight = this.props.winnerPositions.reduce((isHighlight, position) => {
+    const winner = this.props.boardState.judgement().winner
+    if (winner) {
+      isHighlight = winner.positions.reduce((isHighlight, position) => {
         return (isHighlight || position === i);
       }, false);
     }
