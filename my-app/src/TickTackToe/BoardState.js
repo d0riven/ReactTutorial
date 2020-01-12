@@ -5,7 +5,7 @@ export class BoardState  {
   }
 
   mark(move, symbol) {
-    if (this.isMarked(move)) {
+    if (this._isMarked(move)) {
       return false;
     }
 
@@ -13,14 +13,11 @@ export class BoardState  {
     return true;
   }
 
-  isMarked(move) {
-    return this.getSymbol(move) !== null;
-  }
-
   getSymbol(move) {
     return this._squares[this._toIndex(move.row, move.col)];
   }
 
+  // 盤面の状態を見て勝敗判定の結果を返す
   judgement() {
     const lines = [
       // horizontal
@@ -66,6 +63,10 @@ export class BoardState  {
 
   clone() {
     return new BoardState(this._squares.slice());
+  }
+
+  _isMarked(move) {
+    return this.getSymbol(move) !== null;
   }
 
   _toIndex(row, col) {

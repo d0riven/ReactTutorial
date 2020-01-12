@@ -16,12 +16,8 @@ export class History {
     return this._move.clone();
   }
 
-  isNextFirstTurn() {
-    return this.stepNumber % 2 === 1;
-  }
-
   getNextTurnSymbol() {
-    return this.isNextFirstTurn() ? 'X' : 'O';
+    return this._isNextFirstTurn() ? 'X' : 'O';
   }
 
   isFirstHistory() {
@@ -30,6 +26,10 @@ export class History {
 
   clone() {
     return new History(this._boardState, this._move, this.stepNumber);
+  }
+
+  _isNextFirstTurn() {
+    return this.stepNumber % 2 === 1;
   }
 }
 
