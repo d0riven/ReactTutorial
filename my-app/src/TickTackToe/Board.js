@@ -1,6 +1,6 @@
 import React from "react";
 import {Square} from "./Square";
-import {Move} from "./Move";
+import {Move} from "./model/Move";
 
 export class Board extends React.Component {
   renderSquare(i) {

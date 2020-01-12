@@ -1,7 +1,7 @@
 import React from "react";
 import {Board} from "./Board";
-import {HistoryList, History} from "./History";
-import {Move} from "./Move";
+import {HistoryList, History} from "./model/History";
+import {Move} from "./model/Move";
 
 export class Game extends React.Component {
   constructor(props) {

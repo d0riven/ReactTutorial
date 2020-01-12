@@ -1,5 +1,6 @@
 // 盤面の状態
 export class BoardState  {
+  // TODO: validation
   constructor(squares) {
     this._squares = squares;
   }

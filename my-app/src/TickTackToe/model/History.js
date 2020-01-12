@@ -2,6 +2,7 @@ import {BoardState} from "./BoardState";
 
 // 着手の履歴
 export class History {
+  // TODO: validation
   constructor(boardState, move, stepNumber) {
     this._boardState = boardState;
     this._move = move;
